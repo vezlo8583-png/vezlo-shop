@@ -1,0 +1,1 @@
+# vezlo-shop
