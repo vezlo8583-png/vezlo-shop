@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Velzo — Online Store</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f6f6;color:#161616}
+.top{background:#111;color:#fff;padding:10px 5%;font-size:14px}.header{background:#fff;padding:20px 5%;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.logo{font-size:38px;font-weight:800}.logo span{color:#ef2b1f}.search{flex:1;display:flex;min-width:240px}.search input{flex:1;padding:14px;border:1px solid #ddd;border-radius:8px 0 0 8px}.search button,.red{background:#ef2b1f;color:#fff;border:0;padding:14px 20px;border-radius:0 8px 8px 0;font-weight:700;cursor:pointer}
+.nav{background:#171717;color:white;padding:0 5%;display:flex;gap:28px;overflow:auto}.nav div{padding:17px 4px;white-space:nowrap}.container{max-width:1250px;margin:24px auto;padding:0 18px}
+.hero{background:#111;color:white;border-radius:14px;padding:48px;display:flex;justify-content:space-between;align-items:center}.hero h1{font-size:46px;margin:0 0 12px}.hero p{color:#ddd;max-width:560px}.hero button{background:#ef2b1f;color:white;border:0;border-radius:7px;padding:13px 20px;font-weight:700}.deal{font-size:50px;font-weight:800;color:#ef2b1f}
+h2{margin-top:30px}.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.cat{background:#fff;border-radius:10px;padding:22px 8px;text-align:center;font-weight:700;cursor:pointer}.cat b{display:block;font-size:28px;margin-bottom:8px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 5px #ddd}.pic{height:170px;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:65px}.card h3{font-size:16px}.price{font-size:21px;font-weight:800}.card button{width:100%;margin-top:10px;padding:11px;border:0;border-radius:6px;background:#111;color:#fff;cursor:pointer}
+.adminBtn{position:fixed;right:18px;bottom:18px;background:#111;color:#fff;border:0;border-radius:30px;padding:13px 18px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px #999}.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:15px;z-index:5}.box{background:#fff;width:min(850px,100%);max-height:90vh;overflow:auto;border-radius:12px;padding:24px}.close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.form input,.form textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:6px}.form button,.adminActions button{padding:10px 14px;border:0;border-radius:6px;background:#ef2b1f;color:#fff;font-weight:700;cursor:pointer;margin:5px 3px 5px 0}.productRow{display:grid;grid-template-columns:1fr 100px 90px auto;gap:8px;align-items:center;border-bottom:1px solid #eee;padding:10px 0}.muted{color:#777;font-size:13px}.order{background:#f7f7f7;border-radius:8px;padding:12px;margin:8px 0}
+@media(max-width:800px){.hero{padding:28px}.hero h1{font-size:34px}.deal{font-size:34px}.categories{grid-template-columns:repeat(3,1fr)}.products{grid-template-columns:repeat(2,1fr)}.productRow{grid-template-columns:1fr}.hero{display:block}}
+</style>
+</head>
+<body>
+<div class="top">🚚 Free shipping on orders over $60</div>
+<header class="header">
+<div class="logo">Velzo<span>.</span></div>
+<div class="search"><input id="search" placeholder="Search products..." oninput="render()"><button onclick="render()">🔍</button></div>
+<div>👤 My Account</div><div>🛒 Cart: <b id="cartCount">0</b></div>
+</header>
+<nav class="nav"><div>HOME</div><div>ALL CATEGORIES</div><div>BEST SELLERS</div><div>NEW</div><div>DEALS</div><div>CONTACT</div></nav>
+<main class="container">
+<section class="hero"><div><h1>Welcome to <span style="color:#ef2b1f">Velzo</span></h1><p>Great products, simple shopping and new deals every day.</p><button onclick="document.getElementById('products').scrollIntoView()">SHOP NOW</button></div><div class="deal">UP TO<br>70% OFF</div></section>
+<h2>Shop by Category</h2>
+<section class="categories">
+<div class="cat" onclick="category('Electronics')"><b>🎧</b>Electronics</div><div class="cat" onclick="category('Phones')"><b>📱</b>Phones</div><div class="cat" onclick="category('Computers')"><b>💻</b>Computers</div><div class="cat" onclick="category('Fashion')"><b>👕</b>Fashion</div><div class="cat" onclick="category('Sports')"><b>⚽</b>Sports</div><div class="cat" onclick="category('All')"><b>▦</b>All</div>
+</section>
+<h2>Products</h2><section class="products" id="products"></section>
+</main>
+<footer style="background:#111;color:#fff;text-align:center;padding:35px;margin-top:40px">© 2026 Velzo. All rights reserved.</footer>
+<button class="adminBtn" onclick="openAdmin()">⚙ Admin Panel</button>
+
+<div class="modal" id="adminModal"><div class="box">
+<button class="close" onclick="closeAdmin()">×</button><h2>Velzo Admin Panel</h2>
+<p class="muted">Demo admin panel. Changes are stored in this browser using local storage.</p>
+<div class="adminActions"><button onclick="showTab('productsTab')">Products</button><button onclick="showTab('ordersTab')">Orders</button><button onclick="resetProducts()">Reset Demo Products</button></div>
+<div id="productsTab">
+<h3>Add Product</h3><div class="form">
+<input id="pName" placeholder="Product name"><input id="pPrice" type="number" step="0.01" placeholder="Price (USD)">
+<input id="pCategory" placeholder="Category (e.g. Electronics)"><input id="pEmoji" placeholder="Image placeholder emoji, e.g. 🎧">
+<button onclick="addProduct()">Add Product</button></div>
+<h3>Manage Products</h3><div id="productAdmin"></div>
+</div>
+<div id="ordersTab" style="display:none"><h3>Orders</h3><div id="orders"></div></div>
+</div></div>
+
+<script>
+const demo=[
+{name:"Wireless Bluetooth Earbuds",price:29.90,category:"Electronics",emoji:"🎧"},
+{name:"Smart Watch X7 Pro",price:49.90,category:"Electronics",emoji:"⌚"},
+{name:"Mini LED Projector",price:79.90,category:"Electronics",emoji:"📽️"},
+{name:"Power Bank 20000mAh",price:34.90,category:"Electronics",emoji:"🔋"},
+{name:"RGB LED Strip 5m",price:19.90,category:"Electronics",emoji:"💡"},
+{name:"Everyday Backpack",price:39.90,category:"Fashion",emoji:"🎒"},
+{name:"USB-C Fast Charger",price:14.90,category:"Electronics",emoji:"🔌"},
+{name:"Portable Bluetooth Speaker",price:24.90,category:"Electronics",emoji:"🔊"}
+];
+let products=JSON.parse(localStorage.getItem("velzo_products")||"null")||demo;
+let cart=JSON.parse(localStorage.getItem("velzo_cart")||"[]"), activeCategory="All";
+
+function save(){localStorage.setItem("velzo_products",JSON.stringify(products));localStorage.setItem("velzo_cart",JSON.stringify(cart))}
+function render(){
+ let q=(document.getElementById("search").value||"").toLowerCase();
+ let list=products.filter(p=>(activeCategory==="All"||p.category===activeCategory)&&p.name.toLowerCase().includes(q));
+ document.getElementById("products").innerHTML=list.map((p,i)=>`<article class="card"><div class="pic">${p.emoji||"📦"}</div><h3>${p.name}</h3><div class="muted">${p.category}</div><div class="price">$${Number(p.price).toFixed(2)}</div><button onclick="addCart(${products.indexOf(p)})">Add to Cart</button></article>`).join("");
+ document.getElementById("cartCount").textContent=cart.length;
+ renderAdmin();
+}
+function category(c){activeCategory=c;render()}
+function addCart(i){cart.push(products[i]);save();render();alert("Added to cart!")}
+function openAdmin(){document.getElementById("adminModal").style.display="flex";renderAdmin()}
+function closeAdmin(){document.getElementById("adminModal").style.display="none"}
+function showTab(id){document.getElementById("productsTab").style.display=id==="productsTab"?"block":"none";document.getElementById("ordersTab").style.display=id==="ordersTab"?"block":"none";if(id==="ordersTab")renderOrders()}
+function addProduct(){
+ const name=document.getElementById("pName").value.trim(),price=Number(document.getElementById("pPrice").value),category=document.getElementById("pCategory").value.trim()||"Other",emoji=document.getElementById("pEmoji").value.trim()||"📦";
+ if(!name||!price){alert("Please enter a product name and price.");return}
+ products.push({name,price,category,emoji});save();
+ ["pName","pPrice","pCategory","pEmoji"].forEach(id=>document.getElementById(id).value="");render();
+}
+function renderAdmin(){
+ const el=document.getElementById("productAdmin"); if(!el)return;
+ el.innerHTML=products.map((p,i)=>`<div class="productRow"><span>${p.emoji} <b>${p.name}</b><br><small>${p.category}</small></span><span>$${Number(p.price).toFixed(2)}</span><input value="${p.price}" type="number" step=".01" onchange="editPrice(${i},this.value)"><button onclick="deleteProduct(${i})">Delete</button></div>`).join("");
+}
+function editPrice(i,v){products[i].price=Number(v);save();render()}
+function deleteProduct(i){if(confirm("Delete this product?")){products.splice(i,1);save();render()}}
+function resetProducts(){if(confirm("Reset all products to the demo list?")){products=JSON.parse(JSON.stringify(demo));save();render()}}
+function renderOrders(){const o=JSON.parse(localStorage.getItem("velzo_orders")||"[]");document.getElementById("orders").innerHTML=o.length?o.map(x=>`<div class="order"><b>${x.name}</b><br>${x.address}<br>${x.payment} · ${x.total}</div>`).join(""):"No orders yet."}
+render();
+</script>
+</body>
+</html>
